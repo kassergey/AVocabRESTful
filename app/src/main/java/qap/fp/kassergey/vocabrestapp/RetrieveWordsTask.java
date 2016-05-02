@@ -10,22 +10,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-
-import qap.fp.kassergey.vocabrestful.WordModel;
-import qap.fp.kassergey.observer.Observable;
-import qap.fp.kassergey.observer.Observer;
 
 /**
  * Created by kassergey on 26.04.2016.
  */
 
 
-public class RetrieveWordsTask extends AsyncTask<Void, Void, String> implements Observable {
+public class RetrieveWordsTask extends AsyncTask<Void, Void, String>{
 
     private Exception exception;
-    List<Observer> observers = new LinkedList<>();
     private String _req;
 
     public RetrieveWordsTask(String req)
@@ -89,26 +82,6 @@ public class RetrieveWordsTask extends AsyncTask<Void, Void, String> implements 
         }
         catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    //implementation of Observable
-    @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-    @Override
-    public void removeObserver(Observer observer) {
-        if(observers.contains(observer))
-        {
-            observers.remove(observer);
-        }
-    }
-    @Override
-    public void Notify() {
-        for(Observer observer : observers)
-        {
-            observer.update(this, new WordModel());
         }
     }
 }

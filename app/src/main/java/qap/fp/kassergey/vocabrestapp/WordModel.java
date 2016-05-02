@@ -1,4 +1,4 @@
-package qap.fp.kassergey.vocabrestful;
+package qap.fp.kassergey.vocabrestapp;
 
 /**
  * Created by kassergey on 02.05.2016.
