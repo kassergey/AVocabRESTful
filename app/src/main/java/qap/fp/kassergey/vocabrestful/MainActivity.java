@@ -1,26 +1,18 @@
 package qap.fp.kassergey.vocabrestful;
 import android.annotation.TargetApi;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import qap.fp.kassergey.vocabrestapp.RetrieveWordsTask;
 
 
 public class MainActivity extends AppCompatActivity{
     protected void uploadWords(String request)
     {
-        (new RetrieveWordsTask((TextView)findViewById(R.id.textView), request)).execute();
+        (new RetrieveWordsTask(request)).execute();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

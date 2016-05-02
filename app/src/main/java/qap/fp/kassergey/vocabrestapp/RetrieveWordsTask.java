@@ -1,7 +1,6 @@
-package qap.fp.kassergey.vocabrestful;
+package qap.fp.kassergey.vocabrestapp;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,19 +10,26 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+
+import qap.fp.kassergey.vocabrestful.WordModel;
+import qap.fp.kassergey.observer.Observable;
+import qap.fp.kassergey.observer.Observer;
 
 /**
  * Created by kassergey on 26.04.2016.
  */
-public class RetrieveWordsTask extends AsyncTask<Void, Void, String> {
+
+
+public class RetrieveWordsTask extends AsyncTask<Void, Void, String> implements Observable {
 
     private Exception exception;
-    private TextView _tv;
+    List<Observer> observers = new LinkedList<>();
     private String _req;
 
-    public RetrieveWordsTask(TextView tv, String req)
+    public RetrieveWordsTask(String req)
     {
-        _tv = tv;
         _req = req;
     }
     protected void onPreExecute() {
@@ -80,11 +86,29 @@ public class RetrieveWordsTask extends AsyncTask<Void, Void, String> {
                 retStr.append(isonRootObject.optString("wordOrigin").toString() + " - " +
                         isonRootObject.optString("wordTranslation").toString() + "\n");
             }
-            _tv.setText(retStr.toString());
         }
         catch (JSONException e) {
             e.printStackTrace();
-            _tv.setText(response+" "+_req);
+        }
+    }
+
+    //implementation of Observable
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+    @Override
+    public void removeObserver(Observer observer) {
+        if(observers.contains(observer))
+        {
+            observers.remove(observer);
+        }
+    }
+    @Override
+    public void Notify() {
+        for(Observer observer : observers)
+        {
+            observer.update(this, new WordModel());
         }
     }
 }
