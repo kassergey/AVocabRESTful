@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by kassergey on 26.04.2016.
@@ -20,17 +22,19 @@ public class RetrieveWordsTask extends AsyncTask<Void, Void, String>{
 
     private Exception exception;
     private String _req;
+    private CallbackInterface _cbi;
+    List<WordModel> cards = new LinkedList<WordModel>();
 
-    public RetrieveWordsTask(String req)
+    public RetrieveWordsTask(String req, CallbackInterface cbi)
     {
         _req = req;
+        _cbi = cbi;
     }
     protected void onPreExecute() {
     }
 
     protected String doInBackground(Void... params) {
         // Do some validation here
-
         try {
             StringBuilder sb = new StringBuilder("http://192.168.56.1:3000/vocab/");
             sb.append(_req);
@@ -53,7 +57,6 @@ public class RetrieveWordsTask extends AsyncTask<Void, Void, String>{
         catch(Exception e) {
             Log.e("ERROR", e.getMessage(), e);
             return null;
-
         }
     }
 
@@ -62,25 +65,28 @@ public class RetrieveWordsTask extends AsyncTask<Void, Void, String>{
             response = "THERE WAS AN ERROR";
         }
         try {
-            StringBuilder retStr = new StringBuilder();
             if(response.equalsIgnoreCase("null\n")){
+                _cbi.doAfter(null);
             }
             else if(_req.equalsIgnoreCase("")) {
                 JSONArray jsonRootArray = new JSONArray(response);
                 for (int i = 0; i < jsonRootArray.length(); i++) {
                     JSONObject jsonObject = jsonRootArray.getJSONObject(i);
-                    retStr.append(jsonObject.optString("wordOrigin").toString() + " - " +
-                            jsonObject.optString("wordTranslation").toString() + "\n");
+                    cards.add(new WordModel(jsonObject.optString("wordOrigin").toString(),
+                            jsonObject.optString("wordTranslation").toString()));
                 }
             }
             else
             {
-                JSONObject isonRootObject = new JSONObject(response);
-                retStr.append(isonRootObject.optString("wordOrigin").toString() + " - " +
-                        isonRootObject.optString("wordTranslation").toString() + "\n");
+                JSONObject jsonObject = new JSONObject(response);
+                cards.add(new WordModel(jsonObject.optString("wordOrigin").toString(),
+                        jsonObject.optString("wordTranslation").toString()));
             }
+            _cbi.doAfter(cards);
         }
         catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

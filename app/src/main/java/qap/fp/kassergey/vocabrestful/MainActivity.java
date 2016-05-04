@@ -7,13 +7,9 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import qap.fp.kassergey.vocabrestapp.RetrieveWordsTask;
-
+import qap.fp.kassergey.vocabrestapp.Vocabulary;
 
 public class MainActivity extends AppCompatActivity{
-    protected void uploadWords(String request)
-    {
-        (new RetrieveWordsTask(request)).execute();
-    }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -21,7 +17,8 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final TextView tv = (TextView)findViewById(R.id.textView);
-        uploadWords("");
+        final Vocabulary voc = new Vocabulary(new CallBackTextView(tv));
+        voc.getWords();
         SearchView sv = (SearchView)findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -31,7 +28,7 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                uploadWords(newText);
+                voc.getWords(newText);
                 return true;
             }
         });
